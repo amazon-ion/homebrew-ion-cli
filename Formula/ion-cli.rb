@@ -4,9 +4,16 @@
 class IonCli < Formula
   desc "Command line tools for working with the Ion data format."
   homepage "https://github.com/amzn/ion-cli"
+  license "Apache-2.0"
+
+  # Allows installing unreleased changes with the --HEAD flag
+  head "https://github.com/amazon-ion/ion-cli.git", branch: "master"
+
+  # Latest release
   url "https://github.com/amzn/ion-cli/archive/refs/tags/v0.5.0.tar.gz"
   sha256 "54c5a4bec9c833f273b15c101e55ec8affa0c672324c36e2b219e5b9f80c7744"
   version "0.5.0"
+
   depends_on "rust" => :build
 
   def install
