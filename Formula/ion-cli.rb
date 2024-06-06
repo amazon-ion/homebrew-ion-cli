@@ -32,6 +32,10 @@ class IonCli < Formula
       # Head should support all features of `ion-cli`
       # Verify if `generate` subcommand exist on `beta` (`generate` is an experimental feature under `ion-cli`)
       assert_match("generate", shell_output("ion beta generate --help"))
+      # Make an Ion schema file with simple type definition
+      (testpath/"example.isl").write "type::{ name: foo, type: int }"
+      # Generate code based on above schema file and assert that the exit status is 0 (successful)
+      shell_output("ion beta generate --directory #{testpath} --schema example.isl --language java --namespace org.example")
     else
       # Make sure that `ion --version` outputs the expected version number
       assert_match("ion #{self.version}", shell_output("ion --version"))
