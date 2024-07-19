@@ -17,11 +17,7 @@ class IonCli < Formula
   depends_on "rust" => :build
 
   def install
-    if build.head?
-      system "cargo", "build", "--all-features" , "--release", "--bin", "ion"
-    else
-      system "cargo", "build", "--release", "--bin", "ion"
-    end
+    system "cargo", "build", "--release", "--bin", "ion"
     bin.install "target/release/ion"
   end
 
