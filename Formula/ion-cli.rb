@@ -26,12 +26,11 @@ class IonCli < Formula
   end
 
   test do
-      # Make a simple Ion file with a few values in it
-      (testpath/"example.ion").write "foo true 5. null [1, 2, 3]"
-      # Convert the file to binary Ion and assert that the exit status is 0 (successful)
-      shell_output("ion cat --format binary -o ./example.10n ./example.ion")
-      # Convert the binary Ion file back to text and look for the resolved symbol text `foo`
-      assert_match("foo", shell_output("ion cat --format pretty ./example.10n"))
-    end
+    # Make a simple Ion file with a few values in it
+    (testpath/"example.ion").write "foo true 5. null [1, 2, 3]"
+    # Convert the file to binary Ion and assert that the exit status is 0 (successful)
+    shell_output("ion cat --format binary -o ./example.10n ./example.ion")
+    # Convert the binary Ion file back to text and look for the resolved symbol text `foo`
+    assert_match("foo", shell_output("ion cat --format pretty ./example.10n"))
   end
 end
