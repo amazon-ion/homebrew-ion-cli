@@ -7,12 +7,12 @@ class IonCli < Formula
   license "Apache-2.0"
 
   # Allows installing unreleased changes with the --HEAD flag
-  head "https://github.com/amazon-ion/ion-cli.git", branch: "master"
+  head "https://github.com/amazon-ion/ion-cli.git", branch: "main"
 
   # Latest release
-  url "https://github.com/amazon-ion/ion-cli/archive/refs/tags/v0.6.1.tar.gz"
-  sha256 "fa2e1b79d1f1707d5abd1b8e3540ecdaa609ab7ec4868d5a975a5d6aff38da03"
-  version "0.6.1"
+  url "https://github.com/amazon-ion/ion-cli/archive/refs/tags/v0.7.0.tar.gz"
+  sha256 "26eda6549b8ddf43b367f415e5e32d14a923325fe75232bb1a1a7bd519b0a6c2"
+  version "0.7.0"
 
   depends_on "rust" => :build
 
