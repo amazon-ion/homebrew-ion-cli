@@ -10,8 +10,8 @@ class IonCli < Formula
   head "https://github.com/amazon-ion/ion-cli.git", branch: "main"
 
   # Latest release
-  url "https://github.com/amazon-ion/ion-cli/archive/refs/tags/v0.8.0.tar.gz"
-  sha256 "b4e2dfef26bb41e296f333445907461979a605b5564c4aa2ad8184c2574d8e00"
+  url "https://github.com/amazon-ion/ion-cli/archive/refs/tags/v0.9.0.tar.gz"
+  sha256 "b0388a6e21fc751134ed9d670e1079d6ac13cfad130c70f0fd86f1adf7804a37"
   version "0.8.0"
 
   depends_on "rust" => :build
