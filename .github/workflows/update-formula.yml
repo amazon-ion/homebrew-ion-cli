@@ -1,0 +1,55 @@
+name: Update Formula Version
+on:
+  # Allow manually starting the workflow in case we need human intervention or want to trigger it faster.
+  # Also, cron scheduled workflows get disabled if there's no activity after a while, so if it's been more than
+  # a month or so, we might have to manually trigger the workflow to get it going again.
+  workflow_dispatch:
+
+  # Runs at 08:23 UTC / 00:23 PST / 01:23 PDT
+  # 23 is an arbitrarily chosen to avoid running the workflow during the peak at the beginning of the hour
+  #
+  # TODO: See if we can get rid of this and have a workflow in ion-cli trigger this workflow when a new release
+  #       is created. When that happens, we should have the tag passed in as an argument to the workflow.
+  schedule:
+    - cron: '23 8 * * *'
+
+jobs:
+  update-formula-version:
+    # Don't run the cron schedule in forks
+    if: github.repository == 'amazon-ion/homebrew-ion-cli' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Look up the latest release
+          release=$(gh release view -R "amazon-ion/ion-cli" --json tagName,tarballUrl)
+          # extract values from the json response
+          tag="$(jq -r '.tagName' <<< "$release")"
+          tarballUrl="$(jq -r '.tarballUrl' <<< "$release")"
+          
+          version="$(cut -d'v' -f2 <<< "$tag")"
+          
+          if grep -q 'version "'"$version"'"' Formula/ion-cli.rb; then
+            echo "Already up-to-date; using version $version"
+          else
+  
+            # Download the release tar and calculate the sha
+            curl -L "$tarballUrl" --output "ion-cli.tar.gz"
+            sha=`out=$(shasum -a 256 < ion-cli.tar.gz) && echo "${out%%[!0-9A-Za-z]*}"`
+  
+            # Update the formula
+            # Requires GNU sed, which is not installed by default on macOS.
+            # To run this on a Mac, `brew install gnu-sed` and then run with `gsed` instead of `sed`.
+            sed -i -e 's,  url .*,  url "'"$tarballUrl"'",g' \
+                -e 's/  sha256 .*/  sha256 "'"$sha"'"/g' \
+                -e 's/  version .*/  version "'"$version"'"/g' Formula/ion-cli.rb
+          
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git add -u
+            git commit -m "Update ion-cli formula to $tag"
+            git push
+          fi
