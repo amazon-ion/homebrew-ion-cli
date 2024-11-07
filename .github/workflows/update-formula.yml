@@ -18,6 +18,9 @@ jobs:
     # Don't run the cron schedule in forks
     if: github.repository == 'amazon-ion/homebrew-ion-cli' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - shell: bash
@@ -47,9 +50,13 @@ jobs:
                 -e 's/  sha256 .*/  sha256 "'"$sha"'"/g' \
                 -e 's/  version .*/  version "'"$version"'"/g' Formula/ion-cli.rb
           
-            git config user.name github-actions
-            git config user.email github-actions@github.com
+            # TODO: Use the bot token for pushing so that the PR can be auto-approved and merged.
+            git config user.name amazon-ion-bot
+            git config user.email ion-team+amazon-ion-bot@amazon.com
+            git checkout -b "formula-update-$version"
             git add -u
             git commit -m "Update ion-cli formula to $tag"
-            git push
+            # In case this is a re-run, we're going to force push
+            git push --force --set-upstream origin "formula-update-$version"
+            gh pr create --fill
           fi
